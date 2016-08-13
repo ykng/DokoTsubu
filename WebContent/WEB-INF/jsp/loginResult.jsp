@@ -18,7 +18,7 @@ User loginUser = (User) session.getAttribute("loginUser");
 	<a href="/DokoTsubu/Main">To tweet post and watch</a>
 <% } else { %>
 	<p>login failed</p>
-	<a href="/DokoTsubu/">To Top</a>
+	<a href="/DokoTsubu/">Top</a>
 <% } %>
 </body>
 </html>

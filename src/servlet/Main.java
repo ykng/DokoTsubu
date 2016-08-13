@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import model.PostTweetLogic;
 import model.Tweet;
 import model.User;
 
@@ -24,6 +25,7 @@ public class Main extends HttpServlet {
 		// TODO Auto-generated method stub
 		// response.getWriter().append("Served at: ").append(request.getContextPath());
 
+		// confirm whether tweet list is exsist
 		ServletContext application = this.getServletContext();
 		List<Tweet> tweetList = (List<Tweet>) application.getAttribute("tweetList");
 
@@ -43,4 +45,28 @@ public class Main extends HttpServlet {
 		}
 	}
 
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		String tweetText = request.getParameter("tweet");
+
+		if(tweetText != null && tweetText.length() != 0){
+			ServletContext application = this.getServletContext();
+			List<Tweet> tweetList = (List<Tweet>) application.getAttribute("tweetList");
+
+			HttpSession session = request.getSession();
+			User loginUser = (User) session.getAttribute("loginUser");
+			String userName = loginUser.getName();
+
+			Tweet tweet = new Tweet(userName, tweetText);
+			PostTweetLogic postTweetLogic = new PostTweetLogic();
+			postTweetLogic.execute(tweet, tweetList);
+
+			application.setAttribute("tweetList", tweetList);
+		}else{
+			request.setAttribute("errorMsg", "There is no tweet inputed");
+		}
+
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/main.jsp");
+		dispatcher.forward(request, response);
+	}
 }
